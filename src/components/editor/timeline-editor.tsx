@@ -1,10 +1,10 @@
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
 import { Icons } from '@/components/icons';
 import { Button } from '@/components/ui/button';
-import { useToast } from '@/hooks/use-toast'; // Added import
+import { useToast } from '@/hooks/use-toast'; 
 
 export function TimelineEditor() {
-  const { toast } = useToast(); // Added useToast
+  const { toast } = useToast(); 
 
   // Placeholder data for tracks and clips
   const tracks = [
@@ -67,7 +67,17 @@ export function TimelineEditor() {
           {Array.from({ length: totalDuration + 1 }).map((_, i) => (
             <div key={`ruler-${i}`} className="absolute top-0 h-full flex flex-col items-center" style={{ left: `${i * pixelsPerSecond - (i > 0 ? 0.5 : 0)}px` }}>
               <div className={`h-2 w-px ${i % 5 === 0 ? 'bg-foreground' : 'bg-muted-foreground/50'}`}></div>
-              {i % 5 === 0 && <span className="text-[10px] text-muted-foreground mt-0.5">{i}s</span>}
+              {i % 5 === 0 && (
+                <span 
+                  className="text-[10px] text-muted-foreground mt-0.5"
+                  style={
+                    i === 0 ? { transform: 'translateX(50%)' } : 
+                    (i === totalDuration && totalDuration % 5 === 0) ? { transform: 'translateX(-50%)' } : undefined
+                  }
+                >
+                  {i}s
+                </span>
+              )}
             </div>
           ))}
         </div>
@@ -91,7 +101,7 @@ export function TimelineEditor() {
                     width: `${clip.duration * pixelsPerSecond}px` 
                   }}
                   title={clip.name}
-                  onClick={() => toast({ title: 'Clip Selected', description: `${clip.name} on ${track.name} clicked.`})} // Added onClick for clips
+                  onClick={() => toast({ title: 'Clip Selected', description: `${clip.name} on ${track.name} clicked.`})} 
                 >
                   <span className="truncate">{clip.name}</span>
                 </div>
