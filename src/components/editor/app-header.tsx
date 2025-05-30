@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { SidebarTrigger } from '@/components/ui/sidebar'; // Import SidebarTrigger
+import { useToast } from '@/hooks/use-toast'; // Added import
 
 interface AppHeaderProps {
   onToggleLeftSidebar?: () => void;
@@ -19,6 +20,22 @@ interface AppHeaderProps {
 }
 
 export const AppHeader: FC<AppHeaderProps> = ({ onToggleLeftSidebar, onToggleRightSidebar }) => {
+  const { toast } = useToast(); // Added useToast
+
+  const handleUserMenuAction = (actionName: string) => {
+    toast({
+      title: 'User Menu',
+      description: `${actionName} clicked. (Placeholder)`,
+    });
+  };
+  
+  const handleSaveAction = () => {
+    toast({
+      title: 'Save Status',
+      description: 'Content Saved (Placeholder).',
+    });
+  };
+
   return (
     <header className="sticky top-0 z-50 flex h-16 items-center justify-between border-b bg-background/80 px-4 backdrop-blur-md">
       <div className="flex items-center gap-4">
@@ -37,7 +54,7 @@ export const AppHeader: FC<AppHeaderProps> = ({ onToggleLeftSidebar, onToggleRig
       </div>
 
       <div className="flex items-center gap-3">
-        <Button variant="ghost" size="sm">
+        <Button variant="ghost" size="sm" onClick={handleSaveAction}>
           <Icons.cloud className="mr-2" />
           <span>Saved</span>
         </Button>
@@ -71,10 +88,10 @@ export const AppHeader: FC<AppHeaderProps> = ({ onToggleLeftSidebar, onToggleRig
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>My Account</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>Profile</DropdownMenuItem>
-            <DropdownMenuItem>Settings</DropdownMenuItem>
+            <DropdownMenuItem onClick={() => handleUserMenuAction('Profile')}>Profile</DropdownMenuItem>
+            <DropdownMenuItem onClick={() => handleUserMenuAction('Settings')}>Settings</DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>Logout</DropdownMenuItem>
+            <DropdownMenuItem onClick={() => handleUserMenuAction('Logout')}>Logout</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
         {onToggleRightSidebar && (

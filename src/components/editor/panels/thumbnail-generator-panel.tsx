@@ -3,12 +3,13 @@ import { Icons } from '@/components/icons';
 import Image from 'next/image';
 import { useToast } from '@/hooks/use-toast';
 import { Card, CardContent } from '@/components/ui/card';
+import React from 'react'; // Added import for React
 // import { generateThumbnail } from '@/ai/flows/generate-thumbnail';
 
 export function ThumbnailGeneratorPanel() {
   const { toast } = useToast();
   // Placeholder state for suggestions
-  const [suggestions, setSuggestions] = React.useState<Array<{ thumbnailDataUri: string; reason: string }>>([]);
+  const [suggestions, setSuggestions] = React.useState<Array<{ thumbnailDataUri: string; reason: string; dataAiHint?: string }>>([]);
 
   const handleGenerateThumbnails = async () => {
     toast({
@@ -37,6 +38,13 @@ export function ThumbnailGeneratorPanel() {
     }, 1500);
   };
 
+  const handleUseThumbnail = (index: number) => {
+    toast({
+      title: "Thumbnail Selected",
+      description: `Using thumbnail suggestion ${index + 1}. (Placeholder)`,
+    });
+  };
+
   return (
     <div className="p-4 space-y-4">
       <h3 className="font-headline text-sm font-medium text-muted-foreground px-1">AI Thumbnail Generator</h3>
@@ -62,7 +70,7 @@ export function ThumbnailGeneratorPanel() {
                   />
                   <div className="flex-1">
                     <p className="text-xs text-muted-foreground italic mb-1">{suggestion.reason}</p>
-                    <Button variant="outline" size="xs" className="text-xs">Use this thumbnail</Button>
+                    <Button variant="outline" size="xs" className="text-xs" onClick={() => handleUseThumbnail(index)}>Use this thumbnail</Button>
                   </div>
                 </div>
               </CardContent>

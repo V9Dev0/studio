@@ -13,12 +13,31 @@ import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Icons } from "@/components/icons"
 import React from "react";
+import { useToast } from "@/hooks/use-toast"; // Added import
 
 interface ExportDialogProps {
   children: React.ReactNode;
 }
 
 export function ExportDialog({ children }: ExportDialogProps) {
+  const { toast } = useToast(); // Added useToast
+
+  const handleCancel = () => {
+    toast({
+      title: "Export Cancelled",
+      description: "Video export process was cancelled.",
+    });
+    // Dialog should close automatically via Radix or manual control if needed
+  };
+
+  const handleStartExport = () => {
+    toast({
+      title: "Export Started",
+      description: "Your video is being exported. (Placeholder)",
+    });
+    // Dialog should close automatically or manually after starting
+  };
+
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -90,8 +109,8 @@ export function ExportDialog({ children }: ExportDialogProps) {
           </div>
         </div>
         <DialogFooter>
-          <Button type="button" variant="outline">Cancel</Button>
-          <Button type="submit" className="bg-primary hover:bg-primary/90">
+          <Button type="button" variant="outline" onClick={handleCancel}>Cancel</Button>
+          <Button type="submit" className="bg-primary hover:bg-primary/90" onClick={handleStartExport}>
             <Icons.download className="mr-2 h-4 w-4" />
             Start Export
           </Button>

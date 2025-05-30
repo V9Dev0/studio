@@ -1,8 +1,11 @@
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
 import { Icons } from '@/components/icons';
 import { Button } from '@/components/ui/button';
+import { useToast } from '@/hooks/use-toast'; // Added import
 
 export function TimelineEditor() {
+  const { toast } = useToast(); // Added useToast
+
   // Placeholder data for tracks and clips
   const tracks = [
     { 
@@ -35,13 +38,26 @@ export function TimelineEditor() {
   const totalDuration = 20; // seconds
   const pixelsPerSecond = 50;
 
+  const handleTimelineAction = (actionName: string) => {
+    toast({
+      title: 'Timeline Action',
+      description: `${actionName} clicked. (Placeholder)`,
+    });
+  };
+
   return (
     <div className="h-64 bg-muted/30 rounded-lg p-2 flex flex-col shadow-inner">
       <div className="flex items-center justify-between mb-2 px-1">
         <div className="flex items-center gap-2">
-          <Button variant="ghost" size="icon" className="h-7 w-7"><Icons.scissors className="h-4 w-4" /></Button>
-          <Button variant="ghost" size="icon" className="h-7 w-7"><Icons.layers className="h-4 w-4" /></Button>
-          <Button variant="ghost" size="icon" className="h-7 w-7"><Icons.add className="h-4 w-4" /></Button>
+          <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => handleTimelineAction('Split/Cut')}>
+            <Icons.scissors className="h-4 w-4" />
+          </Button>
+          <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => handleTimelineAction('Manage Layers')}>
+            <Icons.layers className="h-4 w-4" />
+          </Button>
+          <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => handleTimelineAction('Add Track/Media')}>
+            <Icons.add className="h-4 w-4" />
+          </Button>
         </div>
         <div className="text-xs text-muted-foreground">Zoom: 100%</div>
       </div>
@@ -75,6 +91,7 @@ export function TimelineEditor() {
                     width: `${clip.duration * pixelsPerSecond}px` 
                   }}
                   title={clip.name}
+                  onClick={() => toast({ title: 'Clip Selected', description: `${clip.name} on ${track.name} clicked.`})} // Added onClick for clips
                 >
                   <span className="truncate">{clip.name}</span>
                 </div>
