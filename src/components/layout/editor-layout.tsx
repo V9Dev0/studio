@@ -84,48 +84,64 @@ export default function EditorLayout() {
 
   const addClipToTimeline = (mediaItem: UploadedMediaItem) => {
     setTimelineTracks(prevTracks => {
-      const newTracks = [...prevTracks];
+      const newTracks = [...prevTracks]; // Create a mutable copy of the tracks array
       let targetTrackType: 'video' | 'audio' = 'video';
-      let clipColor = 'bg-primary/70'; // Default for video/image
+      let clipColor = 'bg-primary/70';
 
+      // Determine target track type and color based on media type
       if (mediaItem.type.startsWith('audio/')) {
         targetTrackType = 'audio';
         clipColor = 'bg-green-500/70';
-      } else if (mediaItem.type.startsWith('video/')) {
-        targetTrackType = 'video';
-        clipColor = 'bg-primary/70';
       } else if (mediaItem.type.startsWith('image/')) {
-        targetTrackType = 'video'; // Images go on video tracks
-        clipColor = 'bg-accent/70'; // Different color for images
+        // Images go on video tracks but can have a different color
+        targetTrackType = 'video';
+        clipColor = 'bg-accent/70'; 
       }
+      // Video remains default bg-primary/70
 
-      let track = newTracks.find(t => t.type === targetTrackType);
+      // Find the target track or create it if it doesn't exist
+      let trackIndex = newTracks.findIndex(t => t.type === targetTrackType);
+      let trackToUpdate: TimelineTrack;
 
-      if (!track) { // Create a new track if none exists of this type
-        track = {
-          id: `track-${targetTrackType}-${Date.now()}`,
+      if (trackIndex === -1) {
+        // Create a new track if none of the target type exists
+        const newTrackId = `track-${targetTrackType}-${Date.now()}`;
+        trackToUpdate = {
+          id: newTrackId,
           name: `${targetTrackType.charAt(0).toUpperCase() + targetTrackType.slice(1)} Track ${newTracks.filter(t => t.type === targetTrackType).length + 1}`,
           type: targetTrackType,
           clips: [],
         };
-        newTracks.push(track);
+        newTracks.push(trackToUpdate);
+        trackIndex = newTracks.length - 1; // Update trackIndex to the new track's index
+      } else {
+        // Important: Create a shallow copy of the track and its clips to ensure immutability
+        trackToUpdate = {
+          ...newTracks[trackIndex],
+          clips: [...newTracks[trackIndex].clips],
+        };
       }
 
-      // Find the end time of the last clip on the target track
-      const lastClipEndTime = track.clips.reduce((maxEnd, clip) => Math.max(maxEnd, clip.start + clip.duration), 0);
+      // Calculate the start time for the new clip (append to the end of the track)
+      const lastClipEndTime = trackToUpdate.clips.reduce((maxEnd, clip) => Math.max(maxEnd, clip.start + clip.duration), 0);
 
       const newClip: TimelineClip = {
-        id: `clip-${mediaItem.id}-${Date.now()}`,
+        id: `clip-${mediaItem.id}-${Date.now()}-${Math.random().toString(36).substring(2, 7)}`, // Enhanced unique ID
         name: mediaItem.title,
-        start: lastClipEndTime, // Append to the end of the track
-        duration: 5, // Default duration of 5 seconds
+        start: lastClipEndTime,
+        duration: 5, // Default duration
         color: clipColor,
         dataUri: mediaItem.dataUri,
         mediaType: mediaItem.type.startsWith('audio/') ? 'audio' : (mediaItem.type.startsWith('video/') ? 'video' : 'image'),
       };
 
-      track.clips.push(newClip);
-      return newTracks;
+      // Add the new clip to the (copied) track's clips array
+      trackToUpdate.clips.push(newClip);
+
+      // Replace the old track with the updated track in the newTracks array
+      newTracks[trackIndex] = trackToUpdate;
+
+      return newTracks; // Return the new state
     });
   };
 
