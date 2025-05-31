@@ -1,3 +1,4 @@
+
 "use client"; // This component manages state for sidebars, so it's a client component
 
 import * as React from 'react';
@@ -11,7 +12,7 @@ import { AppHeader } from '@/components/editor/app-header';
 import { LeftPanel } from '@/components/editor/panels/left-panel';
 import { MainContentPanel } from '@/components/editor/main-content-panel';
 import { RightPanel } from '@/components/editor/panels/right-panel';
-import { Sheet, SheetContent } from '@/components/ui/sheet'; // Added Sheet imports
+import { Sheet, SheetContent } from '@/components/ui/sheet';
 
 // Helper component to access sidebar context for toggling
 function EditorHeaderWithToggle({ onToggleRightSidebar }: { onToggleRightSidebar: () => void }) {
@@ -26,7 +27,7 @@ function EditorHeaderWithToggle({ onToggleRightSidebar }: { onToggleRightSidebar
           leftSidebarContext.setOpen(!leftSidebarContext.open); 
         }
       }}
-      onToggleRightSidebar={onToggleRightSidebar} // Pass down the right sidebar toggle
+      onToggleRightSidebar={onToggleRightSidebar}
     />
   );
 }
@@ -34,7 +35,8 @@ function EditorHeaderWithToggle({ onToggleRightSidebar }: { onToggleRightSidebar
 
 export default function EditorLayout() {
   const [isClient, setIsClient] = React.useState(false);
-  const [rightSidebarOpenMobile, setRightSidebarOpenMobile] = React.useState(false); // State for right mobile sidebar
+  const [rightSidebarOpenMobile, setRightSidebarOpenMobile] = React.useState(false);
+  const [activeLeftPanelTab, setActiveLeftPanelTab] = React.useState<string>("core"); // State for active left panel tab
 
   React.useEffect(() => {
     setIsClient(true);
@@ -55,23 +57,23 @@ export default function EditorLayout() {
         <div className="flex flex-1 overflow-hidden">
           {/* Left Sidebar */}
           <Sidebar side="left" variant="sidebar" collapsible="icon" className="w-80 md:w-72 lg:w-80 border-r">
-            <LeftPanel />
+            <LeftPanel activeTab={activeLeftPanelTab} onTabChange={setActiveLeftPanelTab} />
           </Sidebar>
 
           {/* Main Content Area */}
           <SidebarInset className="flex-1 overflow-auto">
-            <MainContentPanel />
+            <MainContentPanel setActiveLeftPanelTab={setActiveLeftPanelTab} />
           </SidebarInset>
 
           {/* Right Sidebar - Desktop */}
-          <div className="hidden md:flex md:w-72 lg:w-80 border-l flex-col bg-card/50"> {/* Changed bg-sidebar to bg-card/50 for consistency */}
+          <div className="hidden md:flex md:w-72 lg:w-80 border-l flex-col bg-card/50">
             <RightPanel />
           </div>
 
           {/* Right Sidebar - Mobile (Sheet) */}
-          {isClient && ( // Ensure Sheet is only rendered on client
+          {isClient && (
             <Sheet open={rightSidebarOpenMobile} onOpenChange={setRightSidebarOpenMobile}>
-              <SheetContent side="right" className="w-[280px] sm:w-[320px] p-0 bg-card/50"> {/* Consistent background */}
+              <SheetContent side="right" className="w-[280px] sm:w-[320px] p-0 bg-card/50">
                 <RightPanel />
               </SheetContent>
             </Sheet>

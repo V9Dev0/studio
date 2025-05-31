@@ -1,12 +1,16 @@
+
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
 import { Icons } from '@/components/icons';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast'; 
 
-export function TimelineEditor() {
+interface TimelineEditorProps {
+  setActiveLeftPanelTab?: (tab: string) => void;
+}
+
+export function TimelineEditor({ setActiveLeftPanelTab }: TimelineEditorProps) {
   const { toast } = useToast(); 
 
-  // Placeholder data for tracks and clips
   const tracks = [
     { 
       id: 'track1', 
@@ -38,11 +42,19 @@ export function TimelineEditor() {
   const totalDuration = 20; // seconds
   const pixelsPerSecond = 50;
 
-  const handleTimelineAction = (actionName: string) => {
-    toast({
-      title: 'Timeline Action',
-      description: `${actionName} clicked. (Placeholder)`,
-    });
+  const handleTimelineAction = (actionName: string, tabToOpen?: string) => {
+    if (tabToOpen && setActiveLeftPanelTab) {
+      setActiveLeftPanelTab(tabToOpen);
+      toast({
+        title: 'Navigation',
+        description: `Opened ${actionName} panel.`,
+      });
+    } else {
+      toast({
+        title: 'Timeline Action',
+        description: `${actionName} clicked. (Placeholder)`,
+      });
+    }
   };
 
   return (
@@ -55,14 +67,13 @@ export function TimelineEditor() {
           <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => handleTimelineAction('Manage Layers')}>
             <Icons.layers className="h-4 w-4" />
           </Button>
-          <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => handleTimelineAction('Add Track/Media')}>
+          <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => handleTimelineAction('Media Library', 'media')}>
             <Icons.add className="h-4 w-4" />
           </Button>
         </div>
         <div className="text-xs text-muted-foreground">Zoom: 100%</div>
       </div>
-      <ScrollArea className="flex-grow w-full relative"> {/* orientation="both" is not a direct prop for our ui/ScrollArea, Viewport handles overflow */}
-        {/* Ruler */}
+      <ScrollArea className="flex-grow w-full relative">
         <div className="sticky top-0 z-10 h-6 bg-background/50 border-b" style={{ width: `${totalDuration * pixelsPerSecond}px` }}>
           {Array.from({ length: totalDuration + 1 }).map((_, i) => (
             <div key={`ruler-${i}`} className="absolute top-0 h-full flex flex-col items-center" style={{ left: `${i * pixelsPerSecond - (i > 0 ? 0.5 : 0)}px` }}>
@@ -71,8 +82,8 @@ export function TimelineEditor() {
                 <span 
                   className="text-[10px] text-muted-foreground mt-0.5"
                   style={
-                    i === 0 ? { transform: 'translateX(50%)' } : 
-                    (i === totalDuration && totalDuration % 5 === 0) ? { transform: 'translateX(-50%)' } : {}
+                    i === 0 ? { transform: 'translateX(50%)', paddingLeft: '2px' } : 
+                    (i === totalDuration && totalDuration % 5 === 0) ? { transform: 'translateX(-50%)', paddingRight: '2px' } : {}
                   }
                 >
                   {i}s
@@ -82,7 +93,6 @@ export function TimelineEditor() {
           ))}
         </div>
 
-        {/* Tracks */}
         <div className="pt-1 space-y-1" style={{ width: `${totalDuration * pixelsPerSecond}px` }}>
           {tracks.map(track => (
             <div key={track.id} className="h-12 rounded bg-background/30 relative flex items-center pl-2 border border-transparent hover:border-primary/50 group">
@@ -110,7 +120,6 @@ export function TimelineEditor() {
           ))}
         </div>
         <ScrollBar orientation="horizontal" />
-        {/* The default ScrollArea component already includes a vertical ScrollBar, so we don't need to add another one here. */}
       </ScrollArea>
     </div>
   );
