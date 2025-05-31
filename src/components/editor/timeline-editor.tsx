@@ -61,7 +61,7 @@ export function TimelineEditor() {
         </div>
         <div className="text-xs text-muted-foreground">Zoom: 100%</div>
       </div>
-      <ScrollArea className="flex-grow w-full relative" orientation="both">
+      <ScrollArea className="flex-grow w-full relative"> {/* orientation="both" is not a direct prop for our ui/ScrollArea, Viewport handles overflow */}
         {/* Ruler */}
         <div className="sticky top-0 z-10 h-6 bg-background/50 border-b" style={{ width: `${totalDuration * pixelsPerSecond}px` }}>
           {Array.from({ length: totalDuration + 1 }).map((_, i) => (
@@ -72,7 +72,7 @@ export function TimelineEditor() {
                   className="text-[10px] text-muted-foreground mt-0.5"
                   style={
                     i === 0 ? { transform: 'translateX(50%)' } : 
-                    (i === totalDuration && totalDuration % 5 === 0) ? { transform: 'translateX(-50%)' } : undefined
+                    (i === totalDuration && totalDuration % 5 === 0) ? { transform: 'translateX(-50%)' } : {}
                   }
                 >
                   {i}s
@@ -110,7 +110,7 @@ export function TimelineEditor() {
           ))}
         </div>
         <ScrollBar orientation="horizontal" />
-        <ScrollBar orientation="vertical" />
+        {/* The default ScrollArea component already includes a vertical ScrollBar, so we don't need to add another one here. */}
       </ScrollArea>
     </div>
   );
