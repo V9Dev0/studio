@@ -1,3 +1,4 @@
+
 import type { SVGProps } from 'react';
 import {
   Crop,
@@ -62,6 +63,7 @@ import {
   Link,
   Copy,
   Edit3,
+  Loader2, // Added Loader2 for loading states
   LucideIcon
 } from 'lucide-react';
 
@@ -130,6 +132,7 @@ export const Icons = {
   link: Link,
   copy: Copy,
   edit: Edit3,
+  loader: Loader2, // Added Loader2
 };
 
 // Placeholder for app logo, you can replace this with an actual SVG
