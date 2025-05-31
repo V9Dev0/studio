@@ -3,22 +3,23 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { CoreToolsPanel } from './core-tools-panel';
 import { AiToolsPanel } from './ai-tools-panel';
 import { AudioLibraryPanel } from './audio-library-panel';
-import { MediaLibraryPanel } from './media-library-panel'; // Import MediaLibraryPanel
+import { MediaLibraryPanel, type UploadedMediaItem } from './media-library-panel';
 import { Icons } from '@/components/icons';
 import { ScrollArea } from '@/components/ui/scroll-area';
 
 interface LeftPanelProps {
   activeTab: string;
   onTabChange: (value: string) => void;
+  onAddClipToTimeline: (mediaItem: UploadedMediaItem) => void;
 }
 
-export function LeftPanel({ activeTab, onTabChange }: LeftPanelProps) {
+export function LeftPanel({ activeTab, onTabChange, onAddClipToTimeline }: LeftPanelProps) {
   const panelContentHeight = "h-[calc(100vh-theme(spacing.16)-theme(spacing.12)-1px)]"; // Calculated height for scrollable content
 
   return (
     <div className="h-full flex flex-col bg-card/50">
       <Tabs value={activeTab} onValueChange={onTabChange} className="flex flex-col flex-grow">
-        <TabsList className="grid w-full grid-cols-4 rounded-none border-b h-12"> {/* Changed to grid-cols-4 */}
+        <TabsList className="grid w-full grid-cols-4 rounded-none border-b h-12">
           <TabsTrigger value="core" className="text-xs rounded-none data-[state=active]:bg-primary/10 data-[state=active]:text-primary data-[state=active]:shadow-none">
             <Icons.edit className="h-4 w-4 mr-1.5 hidden sm:inline-block" />
             Tools
@@ -27,7 +28,7 @@ export function LeftPanel({ activeTab, onTabChange }: LeftPanelProps) {
             <Icons.wand2 className="h-4 w-4 mr-1.5 hidden sm:inline-block" />
             AI Magic
           </TabsTrigger>
-          <TabsTrigger value="media" className="text-xs rounded-none data-[state=active]:bg-primary/10 data-[state=active]:text-primary data-[state=active]:shadow-none"> {/* New Media Tab */}
+          <TabsTrigger value="media" className="text-xs rounded-none data-[state=active]:bg-primary/10 data-[state=active]:text-primary data-[state=active]:shadow-none">
             <Icons.fileVideo className="h-4 w-4 mr-1.5 hidden sm:inline-block" />
             Media
           </TabsTrigger>
@@ -43,8 +44,8 @@ export function LeftPanel({ activeTab, onTabChange }: LeftPanelProps) {
           <TabsContent value="ai" className="mt-0">
             <AiToolsPanel />
           </TabsContent>
-          <TabsContent value="media" className={`mt-0 ${panelContentHeight}`}> {/* New Media Content */}
-            <MediaLibraryPanel />
+          <TabsContent value="media" className={`mt-0 ${panelContentHeight}`}>
+            <MediaLibraryPanel onAddClipToTimeline={onAddClipToTimeline} />
           </TabsContent>
           <TabsContent value="audio" className={`mt-0 ${panelContentHeight}`}>
             <AudioLibraryPanel />
